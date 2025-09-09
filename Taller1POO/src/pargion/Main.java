@@ -12,6 +12,71 @@ public class Main {
 
 	public static void main(String[] args) throws FileNotFoundException {
 		
+		//Inicio de programa definiendo matriz y llenandola con los archivos :PPPP
+		
+		File experiments = new File("experimentos.txt");	//definir filas matriz
+		Scanner countExp = new Scanner(experiments);
+		int expsTotal=0;
+		
+		while (countExp.hasNextLine()) {
+			expsTotal += 1;
+		}
+		
+		File metricas = new File("metricas.txt");			//definir columnas + metricas matriz
+		Scanner countMtrcs = new Scanner(metricas);
+		int metTotal=0;
+		while (countMtrcs.hasNextLine()) {
+			metTotal += 1;
+		}
+		
+		int[][] matriz = new int[expsTotal][4+metTotal];
+		File predicts = new File("predicciones.txt");
+		Scanner scanPred = new Scanner(predicts);
+		
+		String[] parts = scanPred.nextLine().split(";");
+		String expActual = parts[0];
+		int realV = Integer.parseInt(parts[1]);
+		int predV = Integer.parseInt(parts[2]);
+		
+		String expSetter = expActual;		
+		int expI = 0;									
+											/* La idea es que setea el primer experimento
+		 									para que luego en el while cuando detecte la linea
+		 									con el otro experimento, se cambie, asi para que
+		 									parta al tiro con el otro*/
+		while (scanPred.hasNextLine()) {
+			
+			if (expSetter!=expActual) {
+				expSetter = expActual;
+				expI++;
+			}
+			
+			//FILL THE MATRIXXXXKSKSKS
+			
+			if (realV == 1 && predV == 1) {			// TP
+				matriz[expI][0] += 1;
+			}
+			else if (realV == 0 && predV == 1) {	// FP
+				matriz[expI][1] += 1;
+			}
+			else if (realV == 0 && predV == 0) {	// TN
+				matriz[expI][2] += 1;
+			}
+			else if (realV == 1 && predV == 0) {	// FN
+				matriz[expI][3] += 1;
+			}
+			
+			parts = scanPred.nextLine().split(";");
+			expActual = parts[0];
+			realV = Integer.parseInt(parts[1]);
+			predV = Integer.parseInt(parts[2]);
+			
+			
+		}
+		
+		
+
+		
 		Scanner intro = new Scanner(System.in);
 		
 		System.out.println("Ingresa el menu a usar:");
@@ -25,7 +90,7 @@ public class Main {
 			opc = intro.nextInt();
 			
 			if (opc != 1 && opc != 2 && opc != 3) {
-				System.out.println("pone la wea bien sipo");
+				System.out.println("Error: Ingrese de nuevo opcion");
 			}
 			
 		} while (opc != 1 && opc != 2 && opc != 3);
@@ -35,7 +100,7 @@ public class Main {
 		switch(opc) {
 		
 		case 1:
-			// mostrarMenuUsuario();
+			// mostrar Menu Usuario
 			
 			Scanner Uintrosc = new Scanner(System.in);
 			
@@ -50,7 +115,6 @@ public class Main {
 			System.out.println("4.- Ver promedio de Accuracy de todos los modelos");
 			
 			
-			
 			do {
 				Uopt = Uintrosc.nextInt();
 				
@@ -60,16 +124,12 @@ public class Main {
 				
 			} while (Uopt != 1 && Uopt != 2 && Uopt != 3 && Uopt != 4);
 			
-			
-			
-				
-			
-			
+
 			
 			switch(Uopt) {
 			
 			case 1: // Ver lista de experimentos
-				File experiments = new File("experimentos.txt");
+				
 				Scanner expscan = new Scanner(experiments);
 				
 				System.out.println("ID  |  Descripción ");
@@ -128,7 +188,10 @@ public class Main {
 			break;
 		}
 	
-		
+		intro.close();
+		countExp.close();
+		countMtrcs.close();
+		scanPred.close();
 		
 	}
 	
