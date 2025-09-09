@@ -19,51 +19,59 @@ public class Main {
 		int expsTotal=0;
 		
 		while (countExp.hasNextLine()) {
-			expsTotal += 1;
+			expsTotal++;
+			countExp.nextLine();
 		}
 		
-		File metricas = new File("metricas.txt");			//definir columnas + metricas matriz
-		Scanner countMtrcs = new Scanner(metricas);
-		int metTotal=0;
-		while (countMtrcs.hasNextLine()) {
-			metTotal += 1;
-		}
+
+        // Inicializar matriz con ceros
+        int[][] matriz = new int[expsTotal][4];
+        for (int i = 0; i < expsTotal; i++) {
+            for (int j = 0; j < 4; j++) {
+                matriz[i][j] = 0;
+            }
+        }
 		
-		int[][] matriz = new int[expsTotal][4+metTotal];
+        
+        //leer los predicts
 		File predicts = new File("predicciones.txt");
 		Scanner scanPred = new Scanner(predicts);
 		
 		String[] parts = scanPred.nextLine().split(";");
 		String expActual = parts[0];
 		int realV = Integer.parseInt(parts[1]);
-		int predV = Integer.parseInt(parts[2]);
+		int predV = Integer.parseInt(parts[2]);		
+											
+											
+		for (int i = 0; i < expsTotal; i++) {
+            for (int j = 0; j < 4; j++) {
+                matriz[i][j] = 0;
+            }
+        } 
 		
-		String expSetter = expActual;		
-		int expI = 0;									
-											/* La idea es que setea el primer experimento
-		 									para que luego en el while cuando detecte la linea
-		 									con el otro experimento, se cambie, asi para que
-		 									parta al tiro con el otro*/
+		int expI = -1;
+		String expSetter = "";
+		
 		while (scanPred.hasNextLine()) {
 			
-			if (expSetter!=expActual) {
-				expSetter = expActual;
-				expI++;
-			}
+            if (!expActual.equals(expSetter)) {
+                expI++;
+                expSetter= expActual;
+            }
 			
 			//FILL THE MATRIXXXXKSKSKS
-			
+		
 			if (realV == 1 && predV == 1) {			// TP
-				matriz[expI][0] += 1;
+				matriz[expI][0]++;
 			}
 			else if (realV == 0 && predV == 1) {	// FP
-				matriz[expI][1] += 1;
+				matriz[expI][1]++;
 			}
 			else if (realV == 0 && predV == 0) {	// TN
-				matriz[expI][2] += 1;
+				matriz[expI][2]++;
 			}
 			else if (realV == 1 && predV == 0) {	// FN
-				matriz[expI][3] += 1;
+				matriz[expI][3]++;
 			}
 			
 			parts = scanPred.nextLine().split(";");
@@ -75,7 +83,6 @@ public class Main {
 		}
 		
 		
-
 		
 		Scanner intro = new Scanner(System.in);
 		
@@ -190,7 +197,6 @@ public class Main {
 	
 		intro.close();
 		countExp.close();
-		countMtrcs.close();
 		scanPred.close();
 		
 	}
