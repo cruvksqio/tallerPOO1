@@ -1,2 +1,5 @@
-crusksquio, Alumnos - Constantino Bekios
-minom - Luis Molina
+# Taller 1 POO
+
+- [crusksquio, Alumnos : Constantino Bekios]
+
+- [minom : Luis Molina]
