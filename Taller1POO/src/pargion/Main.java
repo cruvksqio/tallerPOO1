@@ -6,9 +6,56 @@ package pargion;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
+
 public class Main {
+	
+	public static void mostrarMenuAdmin() {
+
+		Scanner adminS =  new Scanner(System.in);
+		int adminOpt = 0;
+
+		do
+		{
+		System.out.println("--- Menu Admin ---");
+		System.out.println("1.- Ver matriz de metricas");
+		System.out.println("2.- Identificar mejor F-1 Score");
+		System.out.println("3.- Calcular promedio global de metricas");
+		System.out.println("4.- Comparar experimento lado a lado");
+		System.out.println("5.- Comparar CSV");
+		System.out.println("6.- Salir");
+		
+		try {
+			adminOpt = adminS.nextInt();
+			adminS.nextLine();
+		} catch (InputMismatchException e) {
+			System.out.println("Error: Numero no fue ingresado");
+			adminS.nextLine();
+		}
+		
+		switch(adminOpt) {
+		case 0:
+			break;
+		case 1:
+			
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		} while (adminOpt!=6);
+		
+		adminS.close();
+		
+	}
+	
 
 	public static void main(String[] args) throws FileNotFoundException {
 		
@@ -82,7 +129,7 @@ public class Main {
 			
 		}
 		
-		
+		//Inicio de sesion
 		
 		Scanner intro = new Scanner(System.in);
 		
@@ -170,11 +217,7 @@ public class Main {
 				System.out.println("");
 				System.out.println("#######################################################");
 				System.out.println("");
-				
-				
-				
-				
-				
+
 				break;
 			
 			case 4:
@@ -187,18 +230,23 @@ public class Main {
 			Uintrosc.close();
 			
 		case 2:
-			// mostrarMenuAdmin();
+			mostrarMenuAdmin();
 			break;
 			
 		case 3:
 			System.out.println("Apagando sistema...");
 			break;
 		}
+
 	
 		intro.close();
 		countExp.close();
 		scanPred.close();
 		
+	}
+	
+	public static int getAccuracy (int i, int j) {
+		return 0;
 	}
 	
 }
