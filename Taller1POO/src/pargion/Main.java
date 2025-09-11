@@ -40,7 +40,7 @@ public class Main {
 			break;
 		case 1:
 			
-			
+		
 		}
 		
 		
@@ -162,7 +162,7 @@ public class Main {
 			
 			do {
 			
-			System.out.println("* Menu Usuario *");
+			System.out.println("--- Menu Usuario ---");
 			System.out.println("1.- Ver lista de experimentos");
 			System.out.println("2.- Mostrar matriz de confusión de un experimento");
 			System.out.println("3.- Ver métricas de un experimento");
@@ -188,12 +188,18 @@ public class Main {
 				
 				System.out.println("ID  |  Descripción ");
 				
+				
 				while (expscan.hasNextLine()) {
-					System.out.println(expscan.nextLine());
+					
+					String[] partes = expscan.nextLine().split(";");
+					partes[0].split("Exp");
+					
+					
+					System.out.println(partes[0] + " " + partes[1]);
 				}
 
 				System.out.println("");
-				System.out.println("#######################################################");
+				System.out.println("-------------------------------------------");
 				System.out.println("");
 				
 				break;
@@ -203,25 +209,41 @@ public class Main {
 				break;
 				
 			case 3: // Ver metricas de un experimento (Accuracy, Precision, Recall, F1)
-				File experimentos = new File("experimentos.txt");
-				Scanner expscan1 = new Scanner(experimentos);
 				
-				int iterador = 1;
+				Scanner u3opt = new Scanner(System.in);
+				int u3exp;
 				
-				while (expscan1.hasNextLine()) {
-					System.out.println("Experimento N° "+ iterador);
-					expscan1.nextLine();
-					iterador += 1;	
-				}
+				System.out.println("Hay " + expsTotal + " Experimentos");
+				System.out.println("Ingrese el N° identificador de el experimento que desea ver :");
 				
-				System.out.println("");
-				System.out.println("#######################################################");
-				System.out.println("");
-
+				u3exp = u3opt.nextInt();
+				
+				u3exp -= 1;															   // Ajustar eleccion a the matrix
+																						
+				if (u3exp < 0 || u3exp >= expsTotal) {								   
+			        System.out.println("Error: El experimento ingresado no existe.");  // Control de error
+			    } else {
+					
+					double acc = getAccuracy(u3exp, matriz);
+					double prec = getPrecission(u3exp, matriz);						   // double cast
+					double rec = getRecall(u3exp, matriz);
+					double f1 = f1Score(rec, prec);
+	
+					System.out.println("Accuracy: " + acc);
+					System.out.println("Precision: " + prec);
+					System.out.println("Recall: " + rec);
+					System.out.println("F1-Score: " + f1);
+					
+					
+					System.out.println("");
+					System.out.println("-------------------------------------------");
+					System.out.println("");
+			    }
+					
 				break;
-			
+																							
 			case 4:
-				
+				                        // FIX FIX FIX FIX FIX FIX FIX :(
 				break;
 			}
 			} while (Uopt != 4);
@@ -243,10 +265,33 @@ public class Main {
 		countExp.close();
 		scanPred.close();
 		
+		
+		
+		
 	}
 	
 	public static int getAccuracy (int i, int j) {
 		return 0;
 	}
+	
+	public static double getAccuracy (int i, int[][] mtr) {
+	    return (double)(mtr[i][0]+mtr[i][3]) / (mtr[i][0] + mtr[i][1] + mtr[i][2] + mtr[i][3]);
+	}
+
+	public static double getPrecission (int i, int[][] mtr) {
+	    return (double)mtr[i][0] / (mtr[i][0] + mtr[i][1]);
+	}
+
+	public static double getRecall(int i, int[][] mtr) {
+	    return (double)mtr[i][0] / (mtr[i][0] + mtr[i][3]);
+	}
+
+
+    public static double f1Score(double reca, double pres) {
+
+        double f1 = 2* (reca * pres)/(reca+pres);
+
+        return f1;
+    } 
 	
 }
