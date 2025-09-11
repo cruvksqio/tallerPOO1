@@ -2,4 +2,4 @@
 
 - [crusksquio, Alumnos : Constantino Bekios]
 
-- [minom : Luis Molina]
+- [minom,mixo : Luis Molina]
