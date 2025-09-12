@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 public class Main {
 	
-	public static void mostrarMenuAdmin() {
+	public static void mostrarMenuAdmin(int expsTotal, int mtr[][]) throws FileNotFoundException {
 
 		Scanner adminS =  new Scanner(System.in);
 		int adminOpt = 0;
@@ -25,36 +25,132 @@ public class Main {
 		System.out.println("3.- Calcular promedio global de metricas");
 		System.out.println("4.- Comparar experimento lado a lado");
 		System.out.println("5.- Comparar CSV");
-		System.out.println("6.- Salir");
+		System.out.println("0.- Salir");
 		
 		try {
 			adminOpt = adminS.nextInt();
 			adminS.nextLine();
 		} catch (InputMismatchException e) {
-			System.out.println("Error: Numero no fue ingresado");
+			System.out.println("Error: Numero no fue ingresado, ingrese un numero correcto");
 			adminS.nextLine();
 		}
 		
 		switch(adminOpt) {
-		case 0:
-			break;
-		case 1:
+		case 0 -> {
+			System.out.println("Volviendo al menu login...");
+		}
 			
+		case 1 -> {
+			System.out.println("  ID  | Accuraccy  | Precission | Recall  |  F1-Score ");
+			
+			for (int i = 0; i < expsTotal; i++) {
+				System.out.println("  EXP  " + i + "  ");
+				System.out.print(getAccuracy(i,mtr) + "  ");
+				
+				double pre = getPrecission(i,mtr);
+				System.out.print(pre + "  ");
+				
+				double rec = getRecall(i,mtr);
+				System.out.print(rec + "  ");
+				System.out.print(getF1Score(pre,rec) + "  ");
+			}
+		}
+			
+		case 2 -> {
+			
+			double bestF1 = -1;
+			int bestF1Exp = -1;
+			
+			for (int i = 0; i < expsTotal; i++)
+			{
+				double pre = getPrecission(i,mtr);
+				double rec = getRecall(i,mtr);
+				double currentF1 = getF1Score(pre,rec);
+				
+				if (currentF1>bestF1)
+				{
+					bestF1 = currentF1;
+					bestF1Exp = i;
+				}
+			}
+			
+			System.out.println("El mejor F1-Score es del Exp" + bestF1Exp + "con " + bestF1);
+		
+			}
+		
+		case 3 -> 
+		{
+			File metrics = new File("metricas.txt");
+			Scanner scaMet = new Scanner(metrics);
+			
+			double promAcc = 0;
+			double promPrec = 0;
+			double promRec = 0;
+			double promF1 = 0;
+			
+			for (int i = 0; i<expsTotal; i++)
+			{
+				promAcc += getAccuracy(i, mtr);
+				promPrec += getPrecission(i,mtr);
+				promRec += getRecall(i,mtr);
+				promF1 += getF1Score(getPrecission(i,mtr),getRecall(i,mtr));
+			}
+			
+			System.out.println(scaMet.nextLine() + ": " + Math.round(promAcc/expsTotal)/100);
+			System.out.println(scaMet.nextLine() + ": " + Math.round(promPrec/expsTotal)/100);
+			System.out.println(scaMet.nextLine() + ": " + Math.round(promRec/expsTotal)/100);
+			System.out.println(scaMet.nextLine() + ": " + Math.round(promF1/expsTotal)/100);
+			scaMet.close();
+			
+		}
+		
+		case 4 -> 
+		{
+			System.out.println("Ingrese primer experimento a comparar:");
+			int expComp1 = adminS.nextInt();
+			if (expComp1>expsTotal || expComp1<0) {
+				throw new IllegalArgumentException("Valor no valido");
+			}
+			System.out.println("Ingrese primer experimento a comparar:");
+			int expComp2 = adminS.nextInt();
+			if (expComp2>expsTotal || expComp2<0) {
+				throw new IllegalArgumentException("Valor no valido");
+			}
+			
+			System.out.println("METRICA    |    EXP" + expComp1 + "  vs  EXP" + expComp2 + "  |");
+			System.out.println("--------------------------------------");
+			
+			File metrics = new File("metricas.txt");
+			Scanner scaMet = new Scanner(metrics);
+			
+			System.out.println(scaMet.nextLine() + ":    " + getAccuracy(expComp1, mtr) +
+					"  |  " + getAccuracy(expComp2, mtr));
+			
+			System.out.println(scaMet.nextLine() + ":    " + getPrecission(expComp1, mtr) +
+					"  |  " + getPrecission(expComp2, mtr));
+			
+			System.out.println(scaMet.nextLine() + ":    " + getRecall(expComp1, mtr) +
+					"  |  " + getRecall(expComp2, mtr));
+			
+			System.out.println(scaMet.nextLine() + ":    " + 
+			getF1Score(getPrecission(expComp1, mtr), getRecall(expComp1, mtr)) + "  |  "
+			+ getF1Score(getPrecission(expComp2, mtr), getRecall(expComp2, mtr)));
+			
+			scaMet.close();
+		}
+		
 		
 		}
 		
 		
-		
-		
-		
-		
-		
-		
-		} while (adminOpt!=6);
+		} while (adminOpt!=0);
 		
 		adminS.close();
 		
+		
 	}
+	
+
 	
 
 	public static void main(String[] args) throws FileNotFoundException {
@@ -64,6 +160,7 @@ public class Main {
 		File experiments = new File("experimentos.txt");	//definir filas matriz
 		Scanner countExp = new Scanner(experiments);
 		int expsTotal=0;
+
 		
 		while (countExp.hasNextLine()) {
 			expsTotal++;
@@ -89,12 +186,6 @@ public class Main {
 		int realV = Integer.parseInt(parts[1]);
 		int predV = Integer.parseInt(parts[2]);		
 											
-											
-		for (int i = 0; i < expsTotal; i++) {
-            for (int j = 0; j < 4; j++) {
-                matriz[i][j] = 0;
-            }
-        } 
 		
 		int expI = -1;
 		String expSetter = "";
@@ -128,6 +219,8 @@ public class Main {
 			
 			
 		}
+		
+		//Importar variables para uso en menu admin
 		
 		//Inicio de sesion
 		
@@ -227,7 +320,7 @@ public class Main {
 					double acc = getAccuracy(u3exp, matriz);
 					double prec = getPrecission(u3exp, matriz);						   // double cast
 					double rec = getRecall(u3exp, matriz);
-					double f1 = f1Score(rec, prec);
+					double f1 = getF1Score(rec, prec);
 	
 					System.out.println("Accuracy: " + acc);
 					System.out.println("Precision: " + prec);
@@ -252,7 +345,7 @@ public class Main {
 			Uintrosc.close();
 			
 		case 2:
-			mostrarMenuAdmin();
+			mostrarMenuAdmin(expsTotal, matriz);
 			break;
 			
 		case 3:
@@ -270,9 +363,10 @@ public class Main {
 		
 	}
 	
-	public static int getAccuracy (int i, int j) {
-		return 0;
-	}
+	
+
+	
+	
 	
 	public static double getAccuracy (int i, int[][] mtr) {
 	    return (double)(mtr[i][0]+mtr[i][3]) / (mtr[i][0] + mtr[i][1] + mtr[i][2] + mtr[i][3]);
@@ -286,8 +380,7 @@ public class Main {
 	    return (double)mtr[i][0] / (mtr[i][0] + mtr[i][3]);
 	}
 
-
-    public static double f1Score(double reca, double pres) {
+    public static double getF1Score(double reca, double pres) {
 
         double f1 = 2* (reca * pres)/(reca+pres);
 
