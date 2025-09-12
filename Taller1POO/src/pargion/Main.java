@@ -96,11 +96,11 @@ public class Main {
 				promF1 += getF1Score(getPrecission(i,mtr),getRecall(i,mtr));
 			}
 			
-			System.out.println(scaMet.nextLine() + ": " + Math.round(promAcc/expsTotal)/100);
-			System.out.println(scaMet.nextLine() + ": " + Math.round(promPrec/expsTotal)/100);
-			System.out.println(scaMet.nextLine() + ": " + Math.round(promRec/expsTotal)/100);
-			System.out.println(scaMet.nextLine() + ": " + Math.round(promF1/expsTotal)/100);
-			scaMet.close();
+			System.out.println(scaMet.nextLine() + ": " + Math.round(promAcc/expsTotal* 100.0)/100.0);
+            System.out.println(scaMet.nextLine() + ": " + Math.round(promPrec/expsTotal* 100.0)/100.0);
+            System.out.println(scaMet.nextLine() + ": " + Math.round(promRec/expsTotal* 100.0)/100.0);
+            System.out.println(scaMet.nextLine() + ": " + Math.round(promF1/expsTotal* 100.0)/100.0);
+            scaMet.close();
 			
 		}
 		
@@ -149,9 +149,6 @@ public class Main {
 		
 		
 	}
-	
-
-	
 
 	public static void main(String[] args) throws FileNotFoundException {
 		
@@ -175,8 +172,7 @@ public class Main {
                 matriz[i][j] = 0;
             }
         }
-		
-        
+		  
         //leer los predicts
 		File predicts = new File("predicciones.txt");
 		Scanner scanPred = new Scanner(predicts);
@@ -242,8 +238,7 @@ public class Main {
 			
 		} while (opc != 1 && opc != 2 && opc != 3);
 		
-		
-		
+	
 		switch(opc) {
 		
 		case 1:
@@ -260,20 +255,19 @@ public class Main {
 			System.out.println("2.- Mostrar matriz de confusión de un experimento");
 			System.out.println("3.- Ver métricas de un experimento");
 			System.out.println("4.- Ver promedio de Accuracy de todos los modelos");
-			
+			System.out.println("0.- Salir");
 			
 			do {
 				Uopt = Uintrosc.nextInt();
 				
-				if (Uopt != 1 && Uopt != 2 && Uopt != 3 && Uopt != 4) {
+				if (Uopt != 1 && Uopt != 2 && Uopt != 3 && Uopt != 4 && Uopt != 0) {
 					System.out.println("Ingrese una opción valida");
 				}
 				
 			} while (Uopt != 1 && Uopt != 2 && Uopt != 3 && Uopt != 4);
 			
-
 			
-			switch(Uopt) {
+			switch(Uopt) {		
 			
 			case 1: // Ver lista de experimentos
 				
@@ -288,7 +282,7 @@ public class Main {
 					partes[0].split("Exp");
 					
 					
-					System.out.println(partes[0] + " " + partes[1]);
+					System.out.println("Experimento " + partes[0].replace("Exp", "") + " : " + partes[1]);
 				}
 
 				System.out.println("");
@@ -322,10 +316,10 @@ public class Main {
 					double rec = getRecall(u3exp, matriz);
 					double f1 = getF1Score(rec, prec);
 	
-					System.out.println("Accuracy: " + acc);
-					System.out.println("Precision: " + prec);
-					System.out.println("Recall: " + rec);
-					System.out.println("F1-Score: " + f1);
+					System.out.println("Accuracy: " + Math.round(acc*100.0)/100.0);
+					System.out.println("Precision: " + Math.round(prec*100.0)/100.0);
+					System.out.println("Recall: " + Math.round(rec*100.0)/100.0);
+					System.out.println("F1-Score: " + Math.round(f1*100.0)/100.0);
 					
 					
 					System.out.println("");
@@ -336,14 +330,28 @@ public class Main {
 				break;
 																							
 			case 4:
-				                        // FIX FIX FIX FIX FIX FIX FIX :(
-				break;
+				
+				double accuracySum = 0;
+				
+				for (int j = 0; j < expsTotal; j++) {
+					accuracySum += getAccuracy(j,matriz);
+					
+		            }
+				
+				accuracySum = accuracySum/expsTotal;
+				
+				System.out.println("El promedio de Accuracy de todos los modelos es de " + Math.round(accuracySum*100.0)/100.0);			
+				
+				System.out.println("");
+				System.out.println("-------------------------------------------");
+				System.out.println("");
+				
 			}
-			} while (Uopt != 4);
+			} while (Uopt != 0);
 			
 			
 			Uintrosc.close();
-			
+		
 		case 2:
 			mostrarMenuAdmin(expsTotal, matriz);
 			break;
@@ -362,11 +370,7 @@ public class Main {
 		
 		
 	}
-	
-	
 
-	
-	
 	
 	public static double getAccuracy (int i, int[][] mtr) {
 	    return (double)(mtr[i][0]+mtr[i][3]) / (mtr[i][0] + mtr[i][1] + mtr[i][2] + mtr[i][3]);
@@ -385,6 +389,6 @@ public class Main {
         double f1 = 2* (reca * pres)/(reca+pres);
 
         return f1;
-    } 
+    }
 	
 }
